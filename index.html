@@ -16,11 +16,11 @@
           <input type="number" id="input_height" name="height" min="1" value="10">
           Grid Width:
           <input type="number" id="input_width" name="width" min="1" value="10">
-          <button type="submit">submit</button>
+          <button type="submit">Submit</button>
       </form>
 
       <h2>Pick A Color</h2>
-      <input type="color" id="colorPicker">
+      <input disabled type="color" id="colorPicker">
       <br>
       <br>
       <div id="recentColorsGhost">
@@ -39,8 +39,10 @@
       <div id="recentColors"></div>
       <br>
       <br>
-      <button type="button" id="clearCanvas">clear canvas</button>
-      <button type="button" id="clearPixel" title="clear pixels">x</button>
+      <button type="button" disabled id="clearCanvas">Clear Canvas</button>
+      <button type="button" disabled id="clearPixel" title="Clear Pixels">x</button>
+      <span id="labelSize">Brush Size</span>
+      <input type="number" disabled id="inputSize" name="size" min="1" value="1">
     </div>
 
     <h2>Design Canvas</h2>
