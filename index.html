@@ -4,50 +4,106 @@
     <title>Pixel Art Maker!</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css?family=Bevan|VT323" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Megrim" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="colorPicker.css">
+    <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css?family=Bevan|VT323" rel="stylesheet"> -->
 </head>
 <body>
     <div id="headerContainer" >
+      <img class="logo-icon" src="./icon.svg" alt="">
       <h1>Pixel Art Maker</h1>
+      <!-- <div class="dropdown">
+        <a title="Expand tools" href="" id="expand" class="dropdown blinking-btn">Grid Settings</a>
 
-      <h2>Choose Grid Size</h2>
-      <form id="sizePicker">
-          Grid Height:
-          <input type="number" id="input_height" name="height" min="1" value="10">
-          Grid Width:
-          <input type="number" id="input_width" name="width" min="1" value="10">
-          <button type="submit">Submit</button>
-      </form>
-
-      <h2>Pick A Color</h2>
-      <input disabled type="color" id="colorPicker">
-      <br>
-      <br>
-      <div id="recentColorsGhost">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-      <br>
-      <div id="recentColors"></div>
-      <br>
-      <br>
-      <button type="button" disabled id="clearCanvas">Clear Canvas</button>
-      <button type="button" disabled id="clearPixel" title="Clear Pixels">x</button>
-      <span id="labelSize">Brush Size</span>
-      <input type="number" disabled id="inputSize" name="size" min="1" value="1">
+        <div class="grid-settings dropdown-content">
+          <form id="sizePicker">
+            <label><strong>Grid dimensions</strong></label>
+            <br>
+            <br>
+            <label class = "dimension-label" for="input_height">Height</label>
+            <input class = "dimension-text" type="number" id="input_height" name="height" min="1" max="100" value="10">
+            <br>
+            <label class="dimension-label" for="input_width">Width</label>
+            <input class = "dimension-text" type="number" id="input_width" name="width" min="1" max="100" value="10">
+            <br>
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+      </div> -->
     </div>
 
-    <h2>Design Canvas</h2>
-    <table id="pixel_canvas"></table>
+    <div class="toolbox">
+      <div class="gridDimensions">
+        <form id="sizePicker">
+          <label><strong>Grid dimensions</strong></label>
+          <br>
+          <br>
+          <label class = "dimension-label" for="input_height">Height</label>
+          <input class = "dimension-text" type="number" id="input_height" name="height" min="1" max="100" value="10">
+          <br>
+          <label class="dimension-label" for="input_width">Width</label>
+          <input class = "dimension-text" type="number" id="input_width" name="width" min="1" max="100" value="10">
+          <br>
+          <button type="submit">Draw Grid</button>
+        </form>
+      </div>
+      <br>
+      <div class="brush-settings">
+        <label>Pick a color</label>
+        <div class="rgb-picker">
+          <div class="pickers">
+            <div id="red-picker">
+              <label class="picker-label" id="red-value"></label>
+              <input type="range" min="0" max="255" value="0" oninput="setRgb()">
+            </div>
+            <div id="green-picker">
+              <label class="picker-label" id="green-value"></label>
+              <input type="range" min="0" max="255" value="0" oninput="setRgb()">
+            </div>
+            <div id="blue-picker">
+              <label class="picker-label" id="blue-value"></label>
+              <input type="range" min="0" max="255" value="0" oninput="setRgb()">
+            </div>
+          </div>
+
+          <div class="color-preview">
+            <input type="color" name="" value="" oninput="setColor()">
+          </div>
+          <div class="rgb-text">
+            <input id="hex-text" maxlength="7" type="text" name="" value="" oninput="textSetRgb()">
+          </div>
+        </div>
+
+        <div id="recentColorsGhost">
+          <div></div><div></div><div></div>
+          <div></div><div></div><div></div>
+          <div></div><div></div><div></div>
+          <div></div>
+        </div>
+
+        <br>
+
+        <div id="recentColors"></div>
+
+        <div class="brush-size">
+          <label>Brush Size</label>
+          <br>
+          <input type="number" disabled id="inputSize" name="size" min="1" value="1">
+        </div>
+      </div>
+
+      <button type="button" disabled id="clearCanvas" class="clear">Clear Canvas</button>
+      <button type="button" disabled id="clearPixel" title="Clear Pixels" class="clear"><i class="fas fa-eraser"></i></button>
+    </div>
+    <div class="canvas">
+      <!-- <h2>Design Canvas</h2> -->
+      <table id="pixel_canvas"></table>
+    </div>
+
 
     <script src="designs.js"></script>
+    <script src="colorPicker.js"></script>
 </body>
 </html>

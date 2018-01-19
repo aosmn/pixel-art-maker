@@ -1,5 +1,5 @@
 // Select color input
-const colorPicker = $('#colorPicker');
+const colorPicker = $('#hex-text');
 // Select size input
 const canvasHeight = $('#input_height');
 const canvasWidth = $('#input_width');
@@ -8,6 +8,9 @@ const canvas = $('#pixel_canvas');
 const clearCanvasBtn = $('#clearCanvas');
 const clearPixelBtn = $('#clearPixel');
 const inputSize = $('#inputSize');
+const expand = $('#expand');
+
+let isToolBoxExpanded = false;
 
 let isDragging = false;
 let clearPixelsActive = false;
@@ -91,14 +94,18 @@ const makeGrid = (height,width) => {
 // When size is submitted by the user, call makeGrid()
 sizePickerForm.on('submit', (evt) => {
   evt.preventDefault();
+  $(".blinking-btn").removeClass("blinking-btn")
+
   const height = canvasHeight.val();
   const width = canvasWidth.val();
   if (firstRun) {
     makeGrid(height, width);
-    firstRun = false;
+
   } else {
-    if (confirm("This will clear canvas! confirm?"))
+    if (confirm("This will clear canvas! confirm?")) {
       makeGrid(height, width);
+      firstRun = true;
+    }
   }
 });
 
@@ -119,6 +126,9 @@ $('#pixel_canvas').on('mousedown', 'td', (evt) => {
   colorMulti(evt);
   // set isDragging flag to true
   isDragging = true;
+  if (firstRun) {
+    firstRun = false
+  }
 });
 
 // Set color On entering a new pixel.
@@ -140,7 +150,7 @@ $('#pixel_canvas').on('mouseleave', () => {
 });
 
 // On color change add previous color to history palette
-$('#colorPicker').on('change', (evt) => {
+colorPicker.on('change', (evt) => {
   if ($('#recentColors').children().length < 10) {
     $('#recentColors').append('<div style="background-color:'+evt.target.value+'"></div>');
   } else {
@@ -153,7 +163,7 @@ $('#colorPicker').on('change', (evt) => {
 // on clicking color palette set selected color to clicked color
 $('#recentColors').on('click','div', (evt) => {
   // convert rgb to hex to be able assign value to color picker
-  $('#colorPicker').val(rgbToHex($(evt.target).css('backgroundColor')));
+  colorPicker.val(rgbToHex($(evt.target).css('backgroundColor')));
 });
 
 // Additional functionality clear all canvas
@@ -168,3 +178,18 @@ $('#clearPixel').on('click', () => {
   clearPixelsActive = !clearPixelsActive;
   $('#clearPixel').toggleClass('active');
 });
+
+// $('#expand').on('click', (e) => {
+//   e.preventDefault()
+//   isToolBoxExpanded = !isToolBoxExpanded;
+//   if (!isToolBoxExpanded){
+//     $(".tool-box").hide()
+//     $("#expand #more").show()
+//     $("#expand #less").hide()
+//   }
+//   else{
+//     $(".tool-box").show()
+//     $("#expand #more").hide()
+//     $("#expand #less").show()
+//   }
+// });
