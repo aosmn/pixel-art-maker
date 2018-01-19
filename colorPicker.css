@@ -15,13 +15,6 @@
   top: 6px;
 }
 
-/*.color-preview {
-  width: 50px;
-  height: 50px;
-  border-radius: 50px;
-  float: right;
-  margin-top: 5px;
-}*/
 .pickers {
   margin-top: -3px;
   width: 135px;
@@ -40,10 +33,6 @@
     text-align:  center;
     color: #aaa;
     padding-top: 2px;
-    /*border: 5px solid white;*/
-    /*padding: 15px;*/
-    /*background: rgba(255,255,255,0.5);*/
-    /*margin: 0 0 10px 0;*/
 }
 
 input[type=range] {
@@ -176,13 +165,6 @@ input[type=range]::-ms-fill-upper {
 input[type=range]:focus::-ms-fill-upper {
   background: #555;
 }
-
-
-/*width: 50px;
-height: 50px;
-border-radius: 50px;
-float: right;
-margin-top: 5px;*/
 
 .color-preview input[type="color"] {
 	-webkit-appearance: none;

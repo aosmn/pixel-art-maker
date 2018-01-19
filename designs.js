@@ -8,7 +8,6 @@ const canvas = $('#pixel_canvas');
 const clearCanvasBtn = $('#clearCanvas');
 const clearPixelBtn = $('#clearPixel');
 const inputSize = $('#inputSize');
-const expand = $('#expand');
 
 let isToolBoxExpanded = false;
 
@@ -94,7 +93,6 @@ const makeGrid = (height,width) => {
 // When size is submitted by the user, call makeGrid()
 sizePickerForm.on('submit', (evt) => {
   evt.preventDefault();
-  $(".blinking-btn").removeClass("blinking-btn")
 
   const height = canvasHeight.val();
   const width = canvasWidth.val();
@@ -116,13 +114,13 @@ $(window).on('resize', () => {
 });
 
 // Change color of the pixel on click
-$('#pixel_canvas').on('click', 'td', (evt) => {
+canvas.on('click', 'td', (evt) => {
   colorMulti(evt);
 });
 
 // additional functionality color pixels on dragging
 
-$('#pixel_canvas').on('mousedown', 'td', (evt) => {
+canvas.on('mousedown', 'td', (evt) => {
   colorMulti(evt);
   // set isDragging flag to true
   isDragging = true;
@@ -132,7 +130,7 @@ $('#pixel_canvas').on('mousedown', 'td', (evt) => {
 });
 
 // Set color On entering a new pixel.
-$('#pixel_canvas').on('mouseenter', 'td', (evt) => {
+canvas.on('mouseenter', 'td', (evt) => {
   // only if dragging
   if (isDragging) {
     colorMulti(evt);
@@ -145,7 +143,7 @@ $(window).on('mouseup', () => {
 });
 
 // unset is dragging if mouse leaves canvas
-$('#pixel_canvas').on('mouseleave', () => {
+canvas.on('mouseleave', () => {
     isDragging = false;
 });
 
@@ -167,29 +165,14 @@ $('#recentColors').on('click','div', (evt) => {
 });
 
 // Additional functionality clear all canvas
-$('#clearCanvas').on('click', () => {
+clearCanvasBtn.on('click', () => {
   if (confirm('Are you sure you want to clear the canvas?')) {
     $('td').css('background-color', 'rgba(0, 0, 0, 0)');
   }
 });
 
 // Additional functionality clear pixels
-$('#clearPixel').on('click', () => {
+clearPixelBtn.on('click', () => {
   clearPixelsActive = !clearPixelsActive;
-  $('#clearPixel').toggleClass('active');
+  clearPixelBtn.toggleClass('active');
 });
-
-// $('#expand').on('click', (e) => {
-//   e.preventDefault()
-//   isToolBoxExpanded = !isToolBoxExpanded;
-//   if (!isToolBoxExpanded){
-//     $(".tool-box").hide()
-//     $("#expand #more").show()
-//     $("#expand #less").hide()
-//   }
-//   else{
-//     $(".tool-box").show()
-//     $("#expand #more").hide()
-//     $("#expand #less").show()
-//   }
-// });
