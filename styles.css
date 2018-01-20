@@ -1,6 +1,6 @@
 body {
   margin: 0;
-
+overflow: scroll
 }
 h1 {
   font-family: 'Megrim', cursive;
@@ -41,7 +41,27 @@ h1 {
     right:  0;
     background: #191c21;
     padding: 10px 20px;
+    overflow: scroll;
 }
+
+.toolbox::-webkit-scrollbar {
+    width: .6em;
+}
+
+.toolbox::-webkit-scrollbar-track {
+  background-color: #0008;
+}
+
+.toolbox::-webkit-scrollbar-thumb {
+  background-color: #fff3;
+  outline: 1px solid slategrey;
+}
+
+.toolbox::-webkit-scrollbar-button {
+  background-color: #0008;
+  height: .6em;
+}
+
 
 .toolbox label {
   color: #fbfcffba;
