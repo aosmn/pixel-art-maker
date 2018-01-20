@@ -6,6 +6,7 @@
     <link href="https://fonts.googleapis.com/css?family=Megrim" rel="stylesheet">
     <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="colorPicker.css">
 </head>
 <body>
     <div id="headerContainer" >
@@ -67,7 +68,7 @@
 
           <div id="recentColors"></div>
         </div>
-
+        <br>
         <div class="brush-size">
           <label>Brush Size</label>
           <br>
@@ -75,8 +76,9 @@
         </div>
       </div>
 
-      <button type="button" disabled id="clearCanvas" class="clear">Clear Canvas</button>
-      <button type="button" disabled id="clearPixel" title="Clear Pixels" class="clear"><i class="fas fa-eraser"></i></button>
+      <button type="button" disabled id="clearCanvas" class="canvasActions">Clear Canvas</button>
+      <button type="button" disabled id="fillCanvas" class="canvasActions">Fill Canvas</button>
+      <button type="button" disabled id="clearPixel" title="Eraser Tool" class="canvasActions"><i class="fas fa-eraser"></i></button>
     </div>
 
     <div class="canvas">

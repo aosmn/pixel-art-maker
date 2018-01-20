@@ -6,16 +6,16 @@ const redLabel = $("#red-value");
 const greenLabel = $("#blue-value");
 const blueLabel = $("#green-value");
 
-const rgbText = $(".rgb-text input");
+// const rgbText = $(".rgb-text input");
 const colorPickerPreview = $(".color-preview input[type='color']");
 
-// const colorPicker = $('#hex-text');
+const colorPickerRange = $(".pickers input[type='range']");
 
 const hexToRgb = (colorval) => {
   // get text inside ();
-  if (colorval.indexOf("#") >-1 && colorval.length == 7 || colorval.indexOf("#") == -1 && colorval.length == 6) {
+  if ((colorval.indexOf("#") >-1 && colorval.length == 7) || (colorval.indexOf("#") == -1 && colorval.length == 6)) {
     const hexVal = colorval.substring(colorval.indexOf('#')+1, colorval.length);
-    const red = parseInt(hexVal.substring(0,2), 16)
+    const red = parseInt(hexVal.substring(0,2), 16);
     const green = parseInt(hexVal.substring(2,4), 16);
     const blue = parseInt(hexVal.substring(4,6), 16);
     redPicker.val(red);
@@ -30,13 +30,14 @@ const setRgb = () => {
   const green = greenPicker.val();
   const blue = bluePicker.val();
   const color = "rgb(" + red + ", " + green + ", " + blue + ")";
-  rgbText.val(rgbToHex(color));
+  colorPicker.val(rgbToHex(color));
   colorPickerPreview.val(rgbToHex(color));
   redLabel.html(red);
   greenLabel.html(green);
   blueLabel.html(blue);
-}
-  setRgb();
+  turOffEraser();
+};
+setRgb();
 
 
 const textSetRgb = () => {
@@ -45,25 +46,51 @@ const textSetRgb = () => {
 
 const setColor = () => {
   hexToRgb(colorPickerPreview.val());
-}
+};
 
 
-$(".pickers input[type='range']").mouseup(function(evt) {
-  if ($('#recentColors').children().length < 10) {
-    $('#recentColors').append('<div style="background-color:'+colorPicker.val()+'"></div>');
+colorPickerRange.mouseup(function(evt) {
+  turOffEraser();
+  if (recentColors.children().length < 10) {
+    recentColors.append('<div style="background-color:'+colorPicker.val()+'"></div>');
   } else {
     // if color palette is already full, remove first element to insert a new one
-    $('#recentColors').children().first().remove();
-    $('#recentColors').append('<div style="background-color:'+colorPicker.val()+'"></div>');
+    recentColors.children().first().remove();
+    recentColors.append('<div style="background-color:'+colorPicker.val()+'"></div>');
   }
-})
+});
 
 colorPickerPreview.on("change", (evt) => {
-  if ($('#recentColors').children().length < 10) {
-    $('#recentColors').append('<div style="background-color:'+colorPicker.val()+'"></div>');
+  if (recentColors.children().length < 10) {
+    recentColors.append('<div style="background-color:'+colorPicker.val()+'"></div>');
   } else {
     // if color palette is already full, remove first element to insert a new one
-    $('#recentColors').children().first().remove();
-    $('#recentColors').append('<div style="background-color:'+colorPicker.val()+'"></div>');
+    recentColors.children().first().remove();
+    recentColors.append('<div style="background-color:'+colorPicker.val()+'"></div>');
   }
-})
+});
+
+colorPicker.on("keyup", (evt) => {
+  colorval = colorPicker.val();
+  if (evt.which == 13 && ((colorval.indexOf("#") >-1 && colorval.length == 4) || (colorval.indexOf("#") == -1 && colorval.length == 3))) {
+    if ((colorval.indexOf("#") >-1 && colorval.length == 7) || (colorval.indexOf("#") == -1 && colorval.length == 6)) {
+      const hexVal = colorval.substring(colorval.indexOf('#')+1, colorval.length);
+      const red = parseInt(hexVal.substring(0,2), 16);
+      const green = parseInt(hexVal.substring(2,4), 16);
+      const blue = parseInt(hexVal.substring(4,6), 16);
+      redPicker.val(red);
+      greenPicker.val(green);
+      bluePicker.val(blue);
+      setRgb();
+    } else if ((colorval.indexOf("#") >-1 && colorval.length == 4) || (colorval.indexOf("#") == -1 && colorval.length == 3)) {
+     const hexVal = colorval.substring(colorval.indexOf('#')+1, colorval.length);
+     const red = parseInt(hexVal.charAt(0)+hexVal.charAt(0), 16);
+     const green = parseInt(hexVal.charAt(1)+hexVal.charAt(1), 16);
+     const blue = parseInt(hexVal.charAt(2)+hexVal.charAt(2), 16);
+     redPicker.val(red);
+     greenPicker.val(green);
+     bluePicker.val(blue);
+     setRgb();
+    }
+  }
+});

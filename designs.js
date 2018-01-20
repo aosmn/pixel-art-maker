@@ -6,16 +6,30 @@ const canvasWidth = $('#input_width');
 const sizePickerForm = $('#sizePicker');
 const canvas = $('#pixel_canvas');
 const clearCanvasBtn = $('#clearCanvas');
+const fillCanvasBtn = $('#fillCanvas');
 const clearPixelBtn = $('#clearPixel');
 const inputSize = $('#inputSize');
+const recentColors = $('#recentColors');
 
 let isToolBoxExpanded = false;
 
 let isDragging = false;
 let clearPixelsActive = false;
+let isFillCanvas = false;
 
 let firstRun = true;
 
+// Turn off eraser tool
+const turOffEraser = () => {
+  clearPixelsActive = false;
+  clearPixelBtn.removeClass('active');
+}
+
+// Turn off fill tool
+const turnOffFill = () => {
+  isFillCanvas = false;
+  fillCanvasBtn.removeClass('active');
+}
 // convert rgb to hex
 const rgbToHex = (colorval) => {
   // get text inside ();
@@ -46,18 +60,35 @@ const colorMulti = (evt, hover) => {
     if (i == 0) {
       prevRow = $(evt.target).parent();
       prevTd = $(evt.target).parent().children('#'+evt.target.id)
+      if (clearPixelsActive)
+        prevTd.addClass("clean");
+      else
+        prevTd.removeClass("clean");
+
       prevTd.css('background-color', colorValue);
       // color each pixel in row
       for (let j = 0; j < radius-1; j++) {
+        if (clearPixelsActive)
+          prevTd.next().addClass("clean");
+        else
+          prevTd.next().removeClass("clean");
         prevTd.next().css('background-color', colorValue);
-        prevTd = prevTd.next()
+        prevTd = prevTd.next();
       }
     } else {
       // color the next rows
       crntRow = prevRow.next();
-      prevTd = crntRow.children('#'+evt.target.id).css('background-color', colorValue);;
+      if (clearPixelsActive)
+        crntRow.children('#'+evt.target.id).addClass("clean");
+      else
+        crntRow.children('#'+evt.target.id).removeClass("clean");
+      prevTd = crntRow.children('#'+evt.target.id).css('background-color', colorValue);
       // color each pixel in row
       for (let j = 0; j < radius-1; j++) {
+        if (clearPixelsActive)
+          prevTd.next().addClass("clean");
+        else
+          prevTd.next().removeClass("clean");
         prevTd.next().css('background-color', colorValue);
         prevTd = prevTd.next();
       }
@@ -74,6 +105,7 @@ const makeGrid = (height,width) => {
 
   // enable clear buttons
   clearCanvasBtn.attr('disabled', false);
+  fillCanvasBtn.attr('disabled', false);
   clearPixelBtn.attr('disabled', false);
   colorPicker.attr('disabled', false);
   inputSize.attr('disabled', false);
@@ -82,7 +114,7 @@ const makeGrid = (height,width) => {
   for (let i = 0; i < height; i++) {
     canvas.append('<tr id="tr'+i+'"></tr>');
     for (let j = 0; j < width; j++) {
-      $('#tr'+i).append('<td id = "td'+j+'"></td>');
+      $('#tr'+i).append('<td id = "td'+j+'" class="clean"></td>');
     }
   }
   // adjust pixel height = pixel width
@@ -115,7 +147,12 @@ $(window).on('resize', () => {
 
 // Change color of the pixel on click
 canvas.on('click', 'td', (evt) => {
-  colorMulti(evt);
+  if (isFillCanvas){
+    $('td').removeClass("clean");
+    $('td').css('background-color', colorPicker.val());
+  }
+  else
+    colorMulti(evt);
 });
 
 // additional functionality color pixels on dragging
@@ -149,25 +186,37 @@ canvas.on('mouseleave', () => {
 
 // On color change add previous color to history palette
 colorPicker.on('change', (evt) => {
-  if ($('#recentColors').children().length < 10) {
-    $('#recentColors').append('<div style="background-color:'+evt.target.value+'"></div>');
-  } else {
-    // if color palette is already full, remove first element to insert a new one
-    $('#recentColors').children().first().remove();
-    $('#recentColors').append('<div style="background-color:'+evt.target.value+'"></div>');
+  turOffEraser();
+  if (evt.which == 13 && ((colorval.indexOf("#") >-1 && colorval.length >= 4) || (colorval.indexOf("#") == -1 && colorval.length >= 3))) {
+    if (recentColors.children().length < 10) {
+      recentColors.append('<div style="background-color:'+evt.target.value+'"></div>');
+    } else {
+      // if color palette is already full, remove first element to insert a new one
+      recentColors.children().first().remove();
+      recentColors.append('<div style="background-color:'+evt.target.value+'"></div>');
+    }
   }
 });
 
-// on clicking color palette set selected color to clicked color
-$('#recentColors').on('click','div', (evt) => {
-  // convert rgb to hex to be able assign value to color picker
-  colorPicker.val(rgbToHex($(evt.target).css('backgroundColor')));
+colorPicker.on('focus', (evt) => {
+  colorPicker.select();
 });
 
-// Additional functionality clear all canvas
+// on clicking color palette set selected color to clicked color
+recentColors.on('click','div', (evt) => {
+  // convert rgb to hex to be able assign value to color picker
+  turOffEraser();
+  colorPicker.val(rgbToHex($(evt.target).css('backgroundColor')));
+  hexToRgb(rgbToHex($(evt.target).css('backgroundColor')));
+});
+
+// Additional functionality fill all canvas
 clearCanvasBtn.on('click', () => {
   if (confirm('Are you sure you want to clear the canvas?')) {
+    turnOffFill();
+    turOffEraser();
     $('td').css('background-color', 'rgba(0, 0, 0, 0)');
+    $('td').addClass("clean");
   }
 });
 
@@ -175,4 +224,12 @@ clearCanvasBtn.on('click', () => {
 clearPixelBtn.on('click', () => {
   clearPixelsActive = !clearPixelsActive;
   clearPixelBtn.toggleClass('active');
+  turnOffFill();
+});
+
+// Additional functionality fill all canvas
+fillCanvasBtn.on('click', () => {
+  isFillCanvas = !isFillCanvas;
+  fillCanvasBtn.toggleClass('active');
+  turOffEraser();
 });
