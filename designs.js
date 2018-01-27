@@ -376,7 +376,7 @@ canvas.on('mousedown', 'td', (evt) => {
     firstRun = false
   }
 });
-
+canvas.contextmenu((evt)=>{evt.preventDefault()})
 // Set color On entering a new pixel.
 canvas.on('mouseenter', 'td', (evt) => {
   // only if dragging

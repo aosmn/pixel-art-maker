@@ -109,7 +109,7 @@ label small {
   margin-right: 1rem;
   margin-left: .5rem;
 }
-.canvasActions i{
+.canvasActions#saveCanvas i{
   margin-right: .5rem;
 }
 .headerActions {
