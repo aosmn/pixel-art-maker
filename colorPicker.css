@@ -36,9 +36,9 @@
 }
 
 input[type=range] {
-  -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
-  width: 100px; /* Specific width is required for Firefox. */
-  background: transparent; /* Otherwise white in Chrome */
+  -webkit-appearance: none;
+  width: 100px;
+  background: transparent;
 }
 
 input[type=range]::-webkit-slider-thumb {
@@ -46,7 +46,7 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 input[type=range]:focus {
-  outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+  outline: none;
 }
 
 input[type=range]::-ms-track {
@@ -59,15 +59,13 @@ input[type=range]::-ms-track {
   color: transparent;
 }
 
-/* Special styling for WebKit/Blink */
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   height: 10px;
   width: 10px;
   border-radius: 12px;
   cursor: pointer;
-  margin-top: -4px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
-  /*box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; /* Add cool effects to your sliders! */*/
+  margin-top: -4px;
 }
 
 

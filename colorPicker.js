@@ -94,3 +94,17 @@ colorPicker.on("keyup", (evt) => {
     }
   }
 });
+
+colorPicker.on("blur", (evt) => {
+  colorval = colorPicker.val();
+  if ((colorval.indexOf("#") >-1 && colorval.length == 4) || (colorval.indexOf("#") == -1 && colorval.length == 3)) {
+     const hexVal = colorval.substring(colorval.indexOf('#')+1, colorval.length);
+     const red = parseInt(hexVal.charAt(0)+hexVal.charAt(0), 16);
+     const green = parseInt(hexVal.charAt(1)+hexVal.charAt(1), 16);
+     const blue = parseInt(hexVal.charAt(2)+hexVal.charAt(2), 16);
+     redPicker.val(red);
+     greenPicker.val(green);
+     bluePicker.val(blue);
+     setRgb();
+  }
+});

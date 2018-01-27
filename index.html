@@ -1,91 +1,95 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Pixel Art Maker!</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=Megrim" rel="stylesheet">
-    <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="colorPicker.css">
-</head>
-<body>
-    <div id="headerContainer" >
-      <img id="logo-icon" src="./icon.svg" alt="">
-      <h1>Pixel Art Maker</h1>
-    </div>
-
-    <div class="toolbox">
-      <div class="gridDimensions">
-        <form id="sizePicker">
-          <label><strong>Grid dimensions</strong></label>
-          <br>
-          <br>
-          <label class = "dimension-label" for="input_height">Height</label>
-          <input class = "dimension-text" type="number" id="input_height" name="height" min="1" max="100" value="10">
-          <br>
-          <label class="dimension-label" for="input_width">Width</label>
-          <input class = "dimension-text" type="number" id="input_width" name="width" min="1" max="100" value="10">
-          <br>
-          <button type="submit">Draw Grid</button>
-        </form>
+  <head>
+      <title>Pixel Art Maker!</title>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+      <link href="https://fonts.googleapis.com/css?family=Megrim" rel="stylesheet">
+      <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
+      <link rel="stylesheet" href="styles.css">
+      <link rel="stylesheet" href="colorPicker.css">
+  </head>
+  <body>
+      <div id="headerContainer" >
+        <i id="logo-icon" class="fas fa-pencil-alt"></i>
+        <h1>Pixel Art Maker</h1>
+        <button type="button" disabled id="redo" class="canvasActions headerActions"><i class="fas fa-redo"></i></button>
+        <button type="button" disabled id="undo" class="canvasActions headerActions"><i class="fas fa-undo"></i></button>
+        <button type="button" disabled id="saveCanvas" title="Save Canvas" class="canvasActions headerActions"><small>CTRL+S</small> <i class="far fa-save"></i></button>
       </div>
 
-      <div class="brush-settings">
-        <div class="color-settings">
-          <label>Pick a color</label>
-          <div class="rgb-picker">
-            <div class="pickers">
-              <div id="red-picker">
-                <label class="picker-label" id="red-value"></label>
-                <input type="range" min="0" max="255" value="0" oninput="setRgb()">
-              </div>
-              <div id="green-picker">
-                <label class="picker-label" id="green-value"></label>
-                <input type="range" min="0" max="255" value="0" oninput="setRgb()">
-              </div>
-              <div id="blue-picker">
-                <label class="picker-label" id="blue-value"></label>
-                <input type="range" min="0" max="255" value="0" oninput="setRgb()">
-              </div>
-            </div>
-
-            <div class="color-preview">
-              <input type="color" name="" value="" oninput="setColor()">
-            </div>
-            <div class="rgb-text">
-              <input id="hex-text" maxlength="7" type="text" name="" value="" oninput="textSetRgb()">
-            </div>
-          </div>
-
-          <div id="recentColorsGhost">
-            <div></div><div></div><div></div>
-            <div></div><div></div><div></div>
-            <div></div><div></div><div></div>
-            <div></div>
-          </div>
-
-          <br>
-
-          <div id="recentColors"></div>
+      <div class="toolbox">
+        <div class="gridDimensions">
+          <form id="sizePicker">
+            <label><strong>Grid dimensions</strong></label>
+            <br>
+            <br>
+            <label class="dimension-label" for="input_width">Width</label>
+            <input class = "dimension-text" type="number" id="input_width" name="width" min="1" max="150" value="100">
+            <br>
+            <label class = "dimension-label" for="input_height">Height</label>
+            <input class = "dimension-text" type="number" id="input_height" name="height" min="1" max="150" value="100">
+            <br>
+            <button type="submit">Draw Grid</button>
+          </form>
         </div>
-        <br>
-        <div class="brush-size">
-          <label>Brush Size</label>
+
+        <div class="brush-settings">
+          <div class="color-settings">
+            <label>Pick a color</label>
+            <div class="rgb-picker">
+              <div class="pickers">
+                <div id="red-picker">
+                  <label class="picker-label" id="red-value"></label>
+                  <input type="range" min="0" max="255" value="0" oninput="setRgb()">
+                </div>
+                <div id="green-picker">
+                  <label class="picker-label" id="green-value"></label>
+                  <input type="range" min="0" max="255" value="0" oninput="setRgb()">
+                </div>
+                <div id="blue-picker">
+                  <label class="picker-label" id="blue-value"></label>
+                  <input type="range" min="0" max="255" value="0" oninput="setRgb()">
+                </div>
+              </div>
+
+              <div class="color-preview">
+                <input type="color" name="color" oninput="setColor()">
+              </div>
+              <div class="rgb-text">
+                <input id="hex-text" maxlength="7" type="text" name="ex-text" value="" oninput="textSetRgb()">
+              </div>
+            </div>
+
+            <div id="recentColorsGhost">
+              <div></div><div></div><div></div>
+              <div></div><div></div><div></div>
+              <div></div><div></div><div></div>
+              <div></div>
+            </div>
+
+            <br>
+
+            <div id="recentColors"></div>
+          </div>
           <br>
-          <input type="number" disabled id="inputSize" name="size" min="1" value="1">
+          <div class="brush-size">
+            <label>Brush Size <small>CTRL+UP, CTRL+DOWN</small></label>
+            <br>
+            <input type="number" disabled id="inputSize" name="size" min="1" value="1">
+          </div>
         </div>
+
+        <button type="button" disabled id="clearCanvas" class="canvasActions">Clear Canvas <small>CTRL+U</small></button>
+        <button type="button" disabled id="fillCanvas" class="canvasActions">Fill Canvas <small>CTRL+B</small></button>
+        <button type="button" disabled id="clearPixel" title="Eraser Tool" class="canvasActions"><i class="fas fa-eraser"></i> <small>CTRL+E</small></button>
+        <!-- <button type="button" disabled id="saveCanvas" title="Save Canvas" class="canvasActions"><i class="far fa-save"></i> <small>CTRL+S</small></button> -->
       </div>
 
-      <button type="button" disabled id="clearCanvas" class="canvasActions">Clear Canvas</button>
-      <button type="button" disabled id="fillCanvas" class="canvasActions">Fill Canvas</button>
-      <button type="button" disabled id="clearPixel" title="Eraser Tool" class="canvasActions"><i class="fas fa-eraser"></i></button>
-    </div>
+      <div class="canvas">
+        <table id="pixel_canvas"></table>
+      </div>
 
-    <div class="canvas">
-      <table id="pixel_canvas"></table>
-    </div>
-
-    <script src="designs.js"></script>
-    <script src="colorPicker.js"></script>
-</body>
+  </body>
+  <script src="designs.js"></script>
+  <script src="colorPicker.js"></script>
 </html>

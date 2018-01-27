@@ -10,14 +10,142 @@ const fillCanvasBtn = $('#fillCanvas');
 const clearPixelBtn = $('#clearPixel');
 const inputSize = $('#inputSize');
 const recentColors = $('#recentColors');
+const saveCanvas = $("#saveCanvas");
+const undoBtn = $("#undo");
+const redoBtn = $("#redo");
 
 let isToolBoxExpanded = false;
 
 let isDragging = false;
 let clearPixelsActive = false;
 let isFillCanvas = false;
+let isClearCanvas = false;
 
 let firstRun = true;
+
+let previousMoves = [];
+let previousMove = [];
+let nextMoves = [];
+let nextMove = [];
+
+// let hasPrevious = false;
+// let hasNext = false;
+
+const savePreviousMove = () => {
+  nextMoves = [];
+  if (previousMoves.length == 10) {
+    previousMoves.splice(0,1);
+  }
+  previousMoves.push({move: previousMove, color: clearPixelsActive ? 'rgba(0, 0, 0, 0)' : colorPicker.val(), isEraser: clearPixelsActive, isUndone: false, isFillCanvas: isFillCanvas, isClearCanvas: isClearCanvas});
+  isClearCanvas = false;
+  redoBtn.attr("disabled", true);
+  previousMove = [];
+  if (previousMoves.length > 0) {
+    undoBtn.attr("disabled", false);
+  }
+  if ($(".clean").length < (canvasHeight.val()*canvasWidth.val())) {
+    saveCanvas.attr('disabled', false);
+    saveCanvas.attr('title', "Save canvas");
+  } else {
+    saveCanvas.attr('disabled', true);
+    saveCanvas.attr('title', "Can't save empty canvas");
+  }
+}
+
+// Undo move
+const undoPreviousMove = () => {
+  nextMove = previousMoves.pop();
+  if (nextMove) {
+    if (nextMove.isEraser || nextMove.isClearCanvas) {
+      nextMove.move.forEach(function(cp) {
+        let pixel = $(cp.selector);
+        if (cp.wasClean) {
+          pixel.addClass("clean");
+          pixel.css('background-color', "rgba(0,0,0,0)");
+        } else {
+          pixel.removeClass("clean");
+          pixel.css('background-color', cp.previousVal);
+        }
+      });
+    } else {
+      nextMove.move.forEach(function(cp) {
+        let pixel = $(cp.selector);
+        if (cp.wasClean) {
+          pixel.addClass("clean");
+          pixel.css('background-color', cp.previousVal);
+        } else
+          pixel.css('background-color', cp.previousVal);
+      });
+    }
+    nextMove.isUndone = true;
+    nextMoves.push(nextMove);
+    nextMove = [];
+
+    if (previousMoves.length == 0) {
+      undoBtn.attr("disabled", true);
+    }
+    if (nextMoves.length > 0) {
+      redoBtn.attr("disabled", false);
+    }
+
+    if ($(".clean").length < (canvasHeight.val()*canvasWidth.val())) {
+      saveCanvas.attr('disabled', false);
+      saveCanvas.attr('title', "Save canvas");
+    } else {
+      saveCanvas.attr('disabled', true);
+      saveCanvas.attr('title', "Can't save empty canvas");
+    }
+  }
+
+}
+
+// Redo move
+const redoNextMove = () => {
+  previousMove = nextMoves.pop();
+  if (previousMove) {
+    if (previousMove.isEraser || previousMove.isClearCanvas) {
+      previousMove.move.forEach(function(cp) {
+        let pixel = $(cp.selector);
+        pixel.addClass("clean");
+        pixel.css('background-color', "rgba(0,0,0,0)");
+      });
+    } else {
+      previousMove.move.forEach(function(cp) {
+        let pixel = $(cp.selector);
+        if (previousMove.isUndone && cp.wasClean) {
+          pixel.removeClass("clean");
+        }
+        pixel.css('background-color', previousMove.color);
+      });
+    }
+    previousMove.isUndone = false;
+    previousMoves.push(previousMove);
+    previousMove = [];
+
+    if (previousMoves.length > 0) {
+      undoBtn.attr("disabled", false);
+    }
+    if (nextMoves.length == 0) {
+      redoBtn.attr("disabled", true);
+    }
+
+    if ($(".clean").length < (canvasHeight.val()*canvasWidth.val())) {
+      saveCanvas.attr('disabled', false);
+      saveCanvas.attr('title', "Save canvas");
+    } else {
+      saveCanvas.attr('disabled', true);
+      saveCanvas.attr('title', "Can't save empty canvas");
+    }
+  }
+}
+
+undoBtn.on("click", function(e){
+  undoPreviousMove()
+});
+redoBtn.on("click", function(e){
+  redoNextMove()
+});
+
 
 // Turn off eraser tool
 const turOffEraser = () => {
@@ -47,19 +175,27 @@ const rgbToHex = (colorval) => {
   return color;
 }
 
-const colorMulti = (evt, hover) => {
-  let prevRow, crntRow, prevTd;
+const colorMulti = (evt) => {
+  let prevRow, crntRow, prevTd, previousColor, hasClean, hasMove;
   // If clearPixel button is active, set color to white
   // else set color to colorpicker color
   const colorValue = clearPixelsActive ? 'rgba(0, 0, 0, 0)' : colorPicker.val();
-
   const radius = $("#inputSize").val();
   // color rows within radius
   for (let i = 0; i < radius; i++) {
     // color first row
     if (i == 0) {
       prevRow = $(evt.target).parent();
-      prevTd = $(evt.target).parent().children('#'+evt.target.id)
+      prevTd = $($(evt.target).parent().children('#'+evt.target.id)[0]);
+      previousColor = prevTd.css('background-color');
+      hasClean =  prevTd.hasClass("clean");
+      hasMove = previousMove.filter(function(m) {
+        return m.selector == "#"+ prevTd.parent().attr("id")+ " #"+prevTd.attr("id");
+      });
+      if (hasMove.length == 0)
+        previousMove.push({selector: "#"+ prevTd.parent().attr("id")+ " #"+prevTd.attr("id"), previousVal: previousColor, wasClean: hasClean});
+
+
       if (clearPixelsActive)
         prevTd.addClass("clean");
       else
@@ -68,6 +204,14 @@ const colorMulti = (evt, hover) => {
       prevTd.css('background-color', colorValue);
       // color each pixel in row
       for (let j = 0; j < radius-1; j++) {
+        previousColor = prevTd.next().css('background-color');
+        hasClean =  prevTd.next().hasClass("clean");
+        hasMove = previousMove.filter(function(m) {
+          return m.selector == "#"+ prevTd.parent().attr("id")+ " #"+prevTd.next().attr("id");
+        });
+        if (hasMove.length == 0)
+          previousMove.push({selector: "#"+ prevTd.parent().attr("id")+ " #"+prevTd.next().attr("id"), previousVal: previousColor, wasClean: hasClean});
+
         if (clearPixelsActive)
           prevTd.next().addClass("clean");
         else
@@ -78,18 +222,38 @@ const colorMulti = (evt, hover) => {
     } else {
       // color the next rows
       crntRow = prevRow.next();
+      prevTd = crntRow.children('#'+evt.target.id)
+      previousColor = prevTd.css('background-color');
+      hasClean =  prevTd.hasClass("clean");
+
+      hasMove = previousMove.filter(function(m) {
+        return m.selector == "#"+ prevTd.parent().attr("id")+ " #"+prevTd.attr("id");
+      });
+      if (hasMove.length == 0)
+        previousMove.push({selector: "#"+ prevTd.parent().attr("id")+ " #"+prevTd.attr("id"), previousVal: previousColor, wasClean: hasClean});
+
       if (clearPixelsActive)
-        crntRow.children('#'+evt.target.id).addClass("clean");
+        prevTd.addClass("clean");
       else
-        crntRow.children('#'+evt.target.id).removeClass("clean");
-      prevTd = crntRow.children('#'+evt.target.id).css('background-color', colorValue);
+        prevTd.removeClass("clean");
+      prevTd.css('background-color', colorValue);
       // color each pixel in row
       for (let j = 0; j < radius-1; j++) {
+        previousColor = prevTd.next().css('background-color');
+        hasClean =  prevTd.next().hasClass("clean");
+        hasMove = previousMove.filter(function(m) {
+          return m.selector == "#"+ prevTd.parent().attr("id")+ " #"+prevTd.next().attr("id");
+        });
+        if (hasMove.length == 0) {
+          previousMove.push({selector: "#"+ prevTd.parent().attr("id")+ " #"+prevTd.next().attr("id"), previousVal: previousColor, wasClean: hasClean});
+        }
+
         if (clearPixelsActive)
           prevTd.next().addClass("clean");
         else
           prevTd.next().removeClass("clean");
         prevTd.next().css('background-color', colorValue);
+
         prevTd = prevTd.next();
       }
       prevRow = crntRow;
@@ -109,6 +273,7 @@ const makeGrid = (height,width) => {
   clearPixelBtn.attr('disabled', false);
   colorPicker.attr('disabled', false);
   inputSize.attr('disabled', false);
+  saveCanvas.attr('disabled', true);
   // foreach row add append table row
   // append table cells
   for (let i = 0; i < height; i++) {
@@ -120,7 +285,36 @@ const makeGrid = (height,width) => {
   // adjust pixel height = pixel width
   const cw = $('td').parent().width()/width;
   $('tr').css({'height':cw+'px'});
-}
+};
+
+makeGrid(100, 100);
+
+const clearCanvas = () => {
+  if (confirm('Are you sure you want to clear the canvas?')) {
+    turnOffFill();
+    turOffEraser();
+    isClearCanvas = true;
+    cells = $("tr td")
+    for (var i = 0; i < cells.length; i++) {
+      let cell = $(cells[i])
+      let previousColor = cell.css("background-color");
+      let hasClean = cell.hasClass("clean");
+      previousMove.push({selector: "#"+ cell.parent().attr("id")+ " #"+cell.attr("id"), previousVal: previousColor, wasClean: hasClean});
+    }
+    savePreviousMove()
+
+
+    $('td').css('background-color', 'rgba(0, 0, 0, 0)');
+    $('td').addClass("clean");
+    if ($(".clean").length < (canvasHeight.val()*canvasWidth.val())) {
+      saveCanvas.attr('disabled', false);
+      saveCanvas.attr('title', "Save canvas");
+    } else {
+      saveCanvas.attr('disabled', true);
+      saveCanvas.attr('title', "Can't save empty canvas");
+    }
+  }
+};
 
 // When size is submitted by the user, call makeGrid()
 sizePickerForm.on('submit', (evt) => {
@@ -148,17 +342,34 @@ $(window).on('resize', () => {
 // Change color of the pixel on click
 canvas.on('click', 'td', (evt) => {
   if (isFillCanvas){
+    cells = $("tr td")
+    for (var i = 0; i < cells.length; i++) {
+      let cell = $(cells[i])
+      let previousColor = cell.css("background-color");
+      let hasClean = cell.hasClass("clean");
+      previousMove.push({selector: "#"+ cell.parent().attr("id")+ " #"+cell.attr("id"), previousVal: previousColor, wasClean: hasClean});
+    }
+    savePreviousMove()
     $('td').removeClass("clean");
     $('td').css('background-color', colorPicker.val());
+    if ($(".clean").length < (canvasHeight.val()*canvasWidth.val())) {
+      saveCanvas.attr('disabled', false);
+      saveCanvas.attr('title', "Save canvas");
+    } else {
+      saveCanvas.attr('disabled', true);
+      saveCanvas.attr('title', "Can't save empty canvas");
+    }
   }
-  else
-    colorMulti(evt);
+  // else
+  //   colorMulti(evt);
 });
 
 // additional functionality color pixels on dragging
 
 canvas.on('mousedown', 'td', (evt) => {
-  colorMulti(evt);
+  if (!isFillCanvas){
+    colorMulti(evt);
+  }
   // set isDragging flag to true
   isDragging = true;
   if (firstRun) {
@@ -173,20 +384,26 @@ canvas.on('mouseenter', 'td', (evt) => {
     colorMulti(evt);
   }
 });
-
+canvas.on('mouseup', () => {
+  if (!isFillCanvas){
+    savePreviousMove();
+  }
+});
 // unset is dragging on mouse up
 $(window).on('mouseup', () => {
     isDragging = false;
 });
 
 // unset is dragging if mouse leaves canvas
-canvas.on('mouseleave', () => {
-    isDragging = false;
-});
+// canvas.on('mouseleave', () => {
+//     isDragging = false;
+// });
 
 // On color change add previous color to history palette
 colorPicker.on('change', (evt) => {
+
   turOffEraser();
+
   if (evt.which == 13 && ((colorval.indexOf("#") >-1 && colorval.length >= 4) || (colorval.indexOf("#") == -1 && colorval.length >= 3))) {
     if (recentColors.children().length < 10) {
       recentColors.append('<div style="background-color:'+evt.target.value+'"></div>');
@@ -212,12 +429,7 @@ recentColors.on('click','div', (evt) => {
 
 // Additional functionality fill all canvas
 clearCanvasBtn.on('click', () => {
-  if (confirm('Are you sure you want to clear the canvas?')) {
-    turnOffFill();
-    turOffEraser();
-    $('td').css('background-color', 'rgba(0, 0, 0, 0)');
-    $('td').addClass("clean");
-  }
+  clearCanvas();
 });
 
 // Additional functionality clear pixels
@@ -232,4 +444,116 @@ fillCanvasBtn.on('click', () => {
   isFillCanvas = !isFillCanvas;
   fillCanvasBtn.toggleClass('active');
   turOffEraser();
+});
+
+//==============================================================================
+// SAVE CANVAS FUNCTIONALITY
+
+const downloadImage = (evt) => {
+  var fileName = "Pixel Art Image";
+  var userInput = prompt("Please enter file name", "Pixel Art Image");
+
+  if (userInput != null) {
+    if (userInput.length > 0) {
+      fileName = userInput;
+    }
+
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+
+    var height = canvas.height()
+    var width = canvas.width()
+    // var html = canvas.html();
+
+    var cloneCanvas = canvas.clone();
+    for (var i = 0; i < cloneCanvas.children().length; i++) {
+      let row = $(cloneCanvas.children()[i]);
+      for (var j = 0; j < row.children().length; j++) {
+        cell = $(row.children()[j]);
+        cell.css("border", "solid 1px #fff4");
+        if (cell.hasClass("clean")) {
+          cell.css("background-color", "rgba(0,0,0,0)");
+        }
+      }
+    }
+
+    var data = '<svg xmlns="http://www.w3.org/2000/svg" width="'+ width +'" height="'+ height +'">' +
+               '<foreignObject width="100%" height="100%">' +
+               '<div xmlns="http://www.w3.org/1999/xhtml" width="100%" height="100%">'+
+               '<table style="border-spacing: 0; border-collapse: collapse; width:100%;height:100%">'+
+                cloneCanvas.html() +
+                '</table>' +
+                '</div>'+
+               '</foreignObject>' +
+               '</svg>';
+
+    var DOMURL = window.URL || window.webkitURL || window;
+    var img = new Image();
+    var svg = new Blob([data], {type: 'image/svg+xml'});
+    var url = DOMURL.createObjectURL(svg);
+
+    img.onload = function() {
+      a.href = url;
+      a.download = fileName + ".svg";
+      a.click();
+      DOMURL.revokeObjectURL(url);
+    }
+    img.src = url;
+  }
+};
+
+saveCanvas.on("click", downloadImage);
+
+//==============================================================================
+// KEYBOARD SHORTCUTS
+
+// define a handler
+$(window).keydown(function(e) {
+  // console.log(e.keyCode);
+
+  // save ctrl+s
+  if (e.ctrlKey && e.keyCode == 83) {
+    e.preventDefault();
+    downloadImage();
+  }
+  // clear ctrl+u
+  if (e.ctrlKey && e.keyCode == 85) {
+    e.preventDefault();
+    clearCanvas();
+  }
+  // erase ctrl+e
+  if (e.ctrlKey && e.keyCode == 66) {
+    e.preventDefault();
+    isFillCanvas = !isFillCanvas;
+    fillCanvasBtn.toggleClass('active');
+    turOffEraser();
+  }
+  // fill ctrl+b
+  if (e.ctrlKey && e.keyCode == 69) {
+    e.preventDefault();
+    clearPixelsActive = !clearPixelsActive;
+    clearPixelBtn.toggleClass('active');
+    turnOffFill();
+  }
+  //  brush size up
+  if (e.ctrlKey && e.keyCode == 38) {
+    e.preventDefault();
+    inputSize.val(parseInt(inputSize.val()) + 1)
+  }
+  // brush size down
+  if (e.ctrlKey && e.keyCode == 40) {
+    e.preventDefault();
+    inputSize.val(parseInt(inputSize.val()) - 1)
+  }
+  // redo
+  if (e.ctrlKey && e.keyCode == 89) {
+    e.preventDefault();
+    redoNextMove()
+  }
+  // undo
+  if (e.ctrlKey && e.keyCode == 90) {
+    e.preventDefault();
+    undoPreviousMove()
+  }
 });
