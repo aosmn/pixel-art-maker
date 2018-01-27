@@ -3,8 +3,8 @@ const greenPicker = $('.rgb-picker #green-picker input');
 const bluePicker = $('.rgb-picker #blue-picker input');
 
 const redLabel = $("#red-value");
-const greenLabel = $("#blue-value");
-const blueLabel = $("#green-value");
+const blueLabel = $("#blue-value");
+const greenLabel = $("#green-value");
 
 // const rgbText = $(".rgb-text input");
 const colorPickerPreview = $(".color-preview input[type='color']");
