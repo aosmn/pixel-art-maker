@@ -267,6 +267,11 @@ const makeGrid = (height,width) => {
   // clear canvas
   canvas.children().remove();
 
+  nextMoves = [];
+  nextMove = [];
+  previousMoves = [];
+  previousMove = [];
+
   // enable clear buttons
   clearCanvasBtn.attr('disabled', false);
   fillCanvasBtn.attr('disabled', false);
@@ -274,6 +279,8 @@ const makeGrid = (height,width) => {
   colorPicker.attr('disabled', false);
   inputSize.attr('disabled', false);
   saveCanvas.attr('disabled', true);
+  undoBtn.attr('disabled', true);
+  redoBtn.attr('disabled', true);
   // foreach row add append table row
   // append table cells
   for (let i = 0; i < height; i++) {
