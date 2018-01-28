@@ -362,8 +362,15 @@ canvas.on('click', 'td', (evt) => {
   }
   // else
   //   colorMulti(evt);
+  return false;
 });
 
+canvas.on('dragstart', function (e) {
+  return false
+});
+canvas.on('dragstart', 'td', function (e) {
+  return false
+});
 // additional functionality color pixels on dragging
 
 canvas.on('mousedown', 'td', (evt) => {
@@ -375,6 +382,7 @@ canvas.on('mousedown', 'td', (evt) => {
   if (firstRun) {
     firstRun = false
   }
+  return false;
 });
 canvas.contextmenu((evt)=>{evt.preventDefault()})
 // Set color On entering a new pixel.
