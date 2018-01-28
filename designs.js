@@ -475,16 +475,8 @@ const downloadImage = (evt) => {
     // var html = canvas.html();
 
     var cloneCanvas = canvas.clone();
-    for (var i = 0; i < cloneCanvas.children().length; i++) {
-      let row = $(cloneCanvas.children()[i]);
-      for (var j = 0; j < row.children().length; j++) {
-        cell = $(row.children()[j]);
-        cell.css("border", "solid 1px #fff4");
-        if (cell.hasClass("clean")) {
-          cell.css("background-color", "rgba(0,0,0,0)");
-        }
-      }
-    }
+    cloneCanvas.find("td").css("border", "solid 1px #fff4");
+    cloneCanvas.find("td.clean").css("background-color", "rgba(0,0,0,0)");
 
     var data = '<svg xmlns="http://www.w3.org/2000/svg" width="'+ width +'" height="'+ height +'">' +
                '<foreignObject width="100%" height="100%">' +
