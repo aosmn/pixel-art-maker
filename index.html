@@ -33,6 +33,13 @@
           </form>
         </div>
 
+        <div class="inputZoom">
+          <label class="zoom-label" for="input_zoom">Zoom %</label>
+          <input class = "zoom" type="number" id="input_zoom" name="width" min="1" value=100>
+          <button type="button" id="zoomOut" class="canvasActions zoom"><i class="fas fa-search-minus"></i></button>
+          <button type="button" id="zoomIn" class="canvasActions zoom"><i class="fas fa-search-plus"></i></button>
+        </div>
+
         <div class="brush-settings">
           <div class="color-settings">
             <label>Pick a color</label>
@@ -87,7 +94,9 @@
       </div>
 
       <div class="canvas">
-        <table id="pixel_canvas"></table>
+        <div class="canvasContainer">
+          <table id="pixel_canvas"></table>
+        </div>
       </div>
 
   </body>

@@ -13,6 +13,9 @@ const recentColors = $('#recentColors');
 const saveCanvas = $("#saveCanvas");
 const undoBtn = $("#undo");
 const redoBtn = $("#redo");
+const zoomIn = $("#zoomIn");
+const zoomOut = $("#zoomOut");
+const zoomInput = $("#input_zoom");
 
 let isToolBoxExpanded = false;
 
@@ -27,6 +30,9 @@ let previousMoves = [];
 let previousMove = [];
 let nextMoves = [];
 let nextMove = [];
+
+let pixelZoom = 1;
+let pixelSize = 10;
 
 // let hasPrevious = false;
 // let hasNext = false;
@@ -291,7 +297,10 @@ const makeGrid = (height,width) => {
   }
   // adjust pixel height = pixel width
   const cw = $('td').parent().width()/width;
-  $('tr').css({'height':cw+'px'});
+  $('td').css('width', pixelSize+'px')
+  $('td').css('min-width', pixelSize+'px')
+  $('td').css('height', pixelSize+'px')
+  $('tr').css({'height': pixelSize+'px'});
 };
 
 makeGrid(100, 100);
@@ -341,10 +350,10 @@ sizePickerForm.on('submit', (evt) => {
 });
 
 // on window resize adjust pixel height = pixel width
-$(window).on('resize', () => {
-    const cw = $('td').parent().width()/canvasWidth.val();
-    $('tr').css({'height':cw+'px'});
-});
+// $(window).on('resize', () => {
+//     const cw = $('td').parent().width()/canvasWidth.val();
+//     $('tr').css({'height':cw+'px'});
+// });
 
 // Change color of the pixel on click
 canvas.on('click', 'td', (evt) => {
@@ -511,6 +520,39 @@ const downloadImage = (evt) => {
 };
 
 saveCanvas.on("click", downloadImage);
+
+// =============================================================================
+// ZOOM IN AND OUT
+zoomIn.on('click', function(e){
+  zoomInput.val((parseInt(zoomInput.val()))+10);
+  let newSize = Math.floor(pixelSize * zoomInput.val() / 100);
+
+  $('td').css('width', newSize + 'px');
+  $('td').css('min-width', newSize + 'px');
+  $('td').css('height', newSize + 'px');
+  $('tr').css({'height': newSize + 'px'});
+});
+
+zoomOut.on('click', function(e){
+  if (zoomInput.val() > 10) {
+    zoomInput.val((parseInt(zoomInput.val()))-10);
+    let newSize = Math.floor(pixelSize * zoomInput.val() / 100);
+
+    $('tr').css('height', newSize + 'px');
+    $('td').css('width', newSize + 'px');
+    $('td').css('min-width', newSize + 'px');
+    $('td').css('height', newSize + 'px');
+  }
+});
+
+zoomInput.on('change', function(e){
+  let newSize = Math.floor(pixelSize * zoomInput.val() / 100);
+
+  $('tr').css('height', newSize + 'px');
+  $('td').css('width', newSize + 'px');
+  $('td').css('min-width', newSize + 'px');
+  $('td').css('height', newSize + 'px');
+});
 
 //==============================================================================
 // KEYBOARD SHORTCUTS

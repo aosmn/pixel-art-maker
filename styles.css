@@ -49,6 +49,8 @@ h1 {
   top: 53px;
   float: right;
   padding: 25px;
+  z-index: 0;
+  overflow: hidden;
 }
 
 .toolbox {
@@ -176,12 +178,19 @@ input[type=number]::-webkit-outer-spin-button
   margin: 0;
 }
 
+.canvasContainer {
+  overflow-x: auto;
+  /*height: calc(100vh - 105px);*/
+  /*width: calc(100vw - 428px);*/
+}
+
 table {
-  border: 1px solid #333;
-  background-color: #fff;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-  border-collapse: collapse;
+  /*border: 1px solid #333;
+  border-bottom: 0;*/
   margin: 0 auto;
+  background-color: #fff;
+  border-collapse: collapse;
   cursor: crosshair;
 }
 
@@ -232,6 +241,10 @@ tr:nth-child(even) td:nth-child(odd).clean {background-color: #fff !important;}
 input[type=number] {
     width: 6em;
     text-align: center;
+}
+
+.zoom {
+  width: 49%;
 }
 
 /* Recent colors */
