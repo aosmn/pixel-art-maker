@@ -406,7 +406,7 @@ canvas.on('touchstart', 'td', (evt) => {
     }
     return false;
   }
-  return true;
+  alert("toucheen")
 });
 
 canvas.on('touchmove', (evt) => {
@@ -419,7 +419,7 @@ canvas.on('touchmove', (evt) => {
     }
     return false;
   }
-  return true;
+  alert("toucheen")
 });
 canvas.on('touchend', () => {
   if (!isFillCanvas){
