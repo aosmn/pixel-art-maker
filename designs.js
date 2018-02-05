@@ -394,8 +394,8 @@ canvas.on('click', 'td', (evt) => {
 });
 
 canvas.on('touchstart', 'td', (evt) => {
-  if (evt.touches.length == 1){
-    console.log(evt);
+  // if (evt.touches.length == 1){
+    // console.log(evt);
     if (!isFillCanvas){
       colorMulti(evt);
     }
@@ -405,21 +405,21 @@ canvas.on('touchstart', 'td', (evt) => {
       firstRun = false
     }
     return false;
-  }
-  alert("toucheen")
+  // }
+  // alert("toucheen")
 });
 
 canvas.on('touchmove', (evt) => {
 
-  console.log(evt.touches);
-  if (evt.touches.length == 1){
+  // console.log(evt);
+  // if (evt.touches.length == 1){
     // only if dragging
     if (isDragging) {
       colorMulti(evt, true);
     }
     return false;
-  }
-  alert("toucheen")
+  // }
+  // alert("toucheen")
 });
 canvas.on('touchend', () => {
   if (!isFillCanvas){
