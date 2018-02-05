@@ -181,7 +181,7 @@ const rgbToHex = (colorval) => {
   return color;
 }
 
-const colorMulti = (evt) => {
+const colorMulti = (evt, isTouch) => {
   let prevRow, crntRow, prevTd, previousColor, hasClean, hasMove;
   // If clearPixel button is active, set color to white
   // else set color to colorpicker color
@@ -191,8 +191,14 @@ const colorMulti = (evt) => {
   for (let i = 0; i < radius; i++) {
     // color first row
     if (i == 0) {
-      prevRow = $(evt.target).parent();
-      prevTd = $($(evt.target).parent().children('#'+evt.target.id)[0]);
+      if (isTouch) {
+        let target = document.elementFromPoint(evt.originalEvent.changedTouches[0].clientX, evt.originalEvent.changedTouches[0].clientY);
+        prevRow = $(target).parent();
+        prevTd = $($(target).parent().children('#'+target.id)[0]);
+      } else {
+        prevRow = $(evt.target).parent();
+        prevTd = $($(evt.target).parent().children('#'+evt.target.id)[0]);
+      }
       previousColor = prevTd.css('background-color');
       hasClean =  prevTd.hasClass("clean");
       hasMove = previousMove.filter(function(m) {
@@ -227,8 +233,14 @@ const colorMulti = (evt) => {
       }
     } else {
       // color the next rows
-      crntRow = prevRow.next();
-      prevTd = crntRow.children('#'+evt.target.id)
+      if (isTouch) {
+        let target = document.elementFromPoint(evt.originalEvent.changedTouches[0].clientX, evt.originalEvent.changedTouches[0].clientY);
+        crntRow = prevRow.next();
+        prevTd = crntRow.children('#'+target.id)
+      } else {
+        crntRow = prevRow.next();
+        prevTd = crntRow.children('#'+evt.target.id)
+      }
       previousColor = prevTd.css('background-color');
       hasClean =  prevTd.hasClass("clean");
 
@@ -379,6 +391,32 @@ canvas.on('click', 'td', (evt) => {
   // else
   //   colorMulti(evt);
   return false;
+});
+
+canvas.on('touchstart', 'td', (evt) => {
+  console.log(evt);
+  if (!isFillCanvas){
+    colorMulti(evt);
+  }
+  // set isDragging flag to true
+  isDragging = true;
+  if (firstRun) {
+    firstRun = false
+  }
+  return false;
+});
+
+canvas.on('touchmove', (evt) => {
+  // only if dragging
+  if (isDragging) {
+    colorMulti(evt, true);
+  }
+});
+canvas.on('touchend', () => {
+  if (!isFillCanvas){
+    savePreviousMove();
+  }
+  isDragging = false;
 });
 
 canvas.on('dragstart', function (e) {
