@@ -410,9 +410,11 @@ canvas.on('touchstart', 'td', (evt) => {
 });
 
 canvas.on('touchmove', (evt) => {
-  // only if dragging
-  if (isDragging) {
-    colorMulti(evt, true);
+  if (evt.touches.length == 1){
+    // only if dragging
+    if (isDragging) {
+      colorMulti(evt, true);
+    }
   }
 });
 canvas.on('touchend', () => {
