@@ -394,16 +394,19 @@ canvas.on('click', 'td', (evt) => {
 });
 
 canvas.on('touchstart', 'td', (evt) => {
-  console.log(evt);
-  if (!isFillCanvas){
-    colorMulti(evt);
+  // console.log(evt);
+
+  if (evt.touches.length == 1){
+    if (!isFillCanvas){
+      colorMulti(evt);
+    }
+    // set isDragging flag to true
+    isDragging = true;
+    if (firstRun) {
+      firstRun = false
+    }
+    return false;
   }
-  // set isDragging flag to true
-  isDragging = true;
-  if (firstRun) {
-    firstRun = false
-  }
-  return false;
 });
 
 canvas.on('touchmove', (evt) => {
