@@ -406,6 +406,7 @@ canvas.on('touchstart', 'td', (evt) => {
     }
     return false;
   }
+  return true;
 });
 
 canvas.on('touchmove', (evt) => {
@@ -418,6 +419,7 @@ canvas.on('touchmove', (evt) => {
     }
     return false;
   }
+  return true;
 });
 canvas.on('touchend', () => {
   if (!isFillCanvas){
@@ -427,10 +429,10 @@ canvas.on('touchend', () => {
 });
 
 canvas.on('dragstart', function (e) {
-  return false
+  return false;
 });
 canvas.on('dragstart', 'td', function (e) {
-  return false
+  return false;
 });
 // additional functionality color pixels on dragging
 
